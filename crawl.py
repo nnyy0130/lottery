@@ -6,24 +6,27 @@ basic_url = 'https://www.cwl.gov.cn/cwl_admin/front/cwlkj/search/kjxx/findDrawNo
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'
 }
-path = "v1ssq"
-for i in range(1,2):
+path = "c:/Users/Administrator/Desktop/v1ssq"
+for i in range(1, 2):
     url = basic_url.format(str(i))
     print(url)
-    response = requests.get(basic_url, headers=headers, timeout=10)
+    response = requests.get(url, headers=headers, timeout=10)
     response.encoding = 'utf-8'
     htm = response.text
     # print(htm)
-    data = json.loads(htm.strip(), encoding="utf-8")
-    arraydata = data.get("result")
-    # print("data:",arraydata)
-    lines = []
-    for data in arraydata:
-        code = data.get('code')
-        red = data.get('red')
-        blue = data.get('blue')
-        line = "{}\t{}\t{}".format(code, red, blue)
-        lines.append(line)
-    with open(path+str(i)+".txt", 'w') as f:
-        for line in lines:
-            f.write(line+'\n')
+    try:
+        data = json.loads(htm)
+        arraydata = data.get("result")
+        # print("data:", arraydata)
+        lines = []
+        for data in arraydata:
+            code = data.get('code')
+            red = data.get('red')
+            blue = data.get('blue')
+            line = "{}\t{}\t{}".format(code, red, blue)
+            lines.append(line)
+        with open(path + str(i) + ".txt", 'w', encoding='utf-8') as f:
+            for line in lines:
+                f.write(line + '\n')
+    except json.JSONDecodeError as e:
+        print("JSON解析错误:", e)
